@@ -1,6 +1,9 @@
 package peripherals
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 type Display interface {
 	Write(string)
@@ -13,14 +16,18 @@ func (*Display2x16) Write(message string) {
 }
 
 type DisplayDummy struct {
+	writer io.Writer
 }
 
-func (*DisplayDummy) Write(message string) {
+func (d *DisplayDummy) Write(message string) {
 	fmt.Printf("writing message: [%v]\n", message)
+	if _, err := d.writer.Write([]byte(message)); err != nil {
+		fmt.Printf("error writing [%v]", err)
+	}
 }
 
-func NewDummyDisplay() Display {
-	return &DisplayDummy{}
+func NewDummyDisplay(writer io.Writer) Display {
+	return &DisplayDummy{writer: writer}
 }
 
 func NewDisplay() Display {
