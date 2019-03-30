@@ -11,17 +11,20 @@ func main() {
 
 	fmt.Println("starting terminal ...")
 	var keyboard = peripherals.NewDummyKeyboard()
-	var buzzer = peripherals.NewDummyBuzzer()
 	var cardreader = peripherals.NewDummyCardReader()
 
 	server := websocket.NewServerWebsocket(":8080")
 	displayWriter := server.AddWriteHandler("/display")
+	buzzerWriter := server.AddWriteHandler("/buzzer")
 
 	go server.Start()
 
 	var display = peripherals.NewDummyDisplay(displayWriter)
+	var buzzer = peripherals.NewDummyBuzzer(buzzerWriter)
 	for {
 		display.Write("hello")
+		buzzer.Beep()
+		fmt.Println("loop")
 		time.Sleep(1 * time.Second)
 	}
 	buzzer.Beep()

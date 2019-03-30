@@ -1,7 +1,6 @@
 package peripherals
 
 import (
-	"fmt"
 	"io"
 )
 
@@ -16,18 +15,15 @@ func (*Display2x16) Write(message string) {
 }
 
 type DisplayDummy struct {
-	writer io.Writer
+	writer *peripheralWriter
 }
 
 func (d *DisplayDummy) Write(message string) {
-	fmt.Printf("writing message: [%v]\n", message)
-	if _, err := d.writer.Write([]byte(message)); err != nil {
-		fmt.Printf("error writing [%v]", err)
-	}
+	d.writer.write(message)
 }
 
 func NewDummyDisplay(writer io.Writer) Display {
-	return &DisplayDummy{writer: writer}
+	return &DisplayDummy{writer: newWriter(writer)}
 }
 
 func NewDisplay() Display {

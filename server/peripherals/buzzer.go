@@ -1,18 +1,21 @@
 package peripherals
 
-import "fmt"
+import (
+	"io"
+)
 
 type Buzzer interface {
 	Beep()
 }
 
 type BuzzerDummy struct {
+	writer *peripheralWriter
 }
 
-func (*BuzzerDummy) Beep() {
-	fmt.Println("buzzer beep !!!")
+func (b *BuzzerDummy) Beep() {
+	b.writer.write("beep")
 }
 
-func NewDummyBuzzer() Buzzer {
-	return &BuzzerDummy{}
+func NewDummyBuzzer(writer io.Writer) Buzzer {
+	return &BuzzerDummy{writer: newWriter(writer)}
 }
