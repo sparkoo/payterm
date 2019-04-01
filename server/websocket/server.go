@@ -1,8 +1,6 @@
 package websocket
 
 import (
-	"bytes"
-	"fmt"
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
@@ -16,7 +14,7 @@ var upgrader = websocket.Upgrader{
 
 type Server interface {
 	AddWriteHandler(addr string) io.Writer
-	AddReadListener(addr string, reader io.Reader)
+	AddReadListener(addr string) io.Reader
 	Start()
 	Close()
 }
@@ -31,37 +29,14 @@ func (s *ServerWebsocket) AddWriteHandler(addr string) io.Writer {
 	return writer
 }
 
-func (s *ServerWebsocket) AddReadListener(addr string, reader io.Reader) {
-	panic("implement me")
+func (s *ServerWebsocket) AddReadListener(addr string) io.Reader {
+	r := newServerReader()
+	http.Handle(addr, r)
+	return r
 }
 
 func NewServerWebsocket(addr string) Server {
 	return &ServerWebsocket{addr: addr}
-}
-
-func handleReadRequest(writer http.ResponseWriter, request *http.Request) {
-	c, err := upgrader.Upgrade(writer, request, nil)
-	if err != nil {
-		log.Print("upgrade:", err)
-		return
-	}
-	defer c.Close()
-
-	c.PongHandler()
-
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read: ", err)
-			break
-		}
-		log.Printf("recv: %s, %v", message, mt)
-
-		err = c.WriteMessage(websocket.TextMessage, bytes.NewBufferString("blob").Bytes())
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
 }
 
 func (s *ServerWebsocket) Start() {
@@ -72,4 +47,10 @@ func (s *ServerWebsocket) Start() {
 
 func (*ServerWebsocket) Close() {
 
+}
+
+func closeConnection(conn *websocket.Conn) {
+	if err := conn.Close(); err != nil {
+		panic(err)
+	}
 }
