@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
@@ -11,15 +10,15 @@ import (
 const ready = "ready"
 
 type serverWriter struct {
-	messages chan string
+	messages chan []byte
 }
 
 func newServerWriter() *serverWriter {
-	return &serverWriter{messages: make(chan string)}
+	return &serverWriter{messages: make(chan []byte)}
 }
 
 func (serverWriter *serverWriter) Write(p []byte) (n int, err error) {
-	serverWriter.messages <- string(p)
+	serverWriter.messages <- p
 	return len(p), nil
 }
 
@@ -30,14 +29,10 @@ func (serverWriter *serverWriter) ServeHTTP(writer http.ResponseWriter, request 
 		return
 	}
 
-	go func(c *websocket.Conn) {
-		if err := writeloop(c, serverWriter); err != nil {
-			fmt.Println("connection closed")
-			if err := c.Close(); err != nil {
-				fmt.Println("error closing connection", err)
-			}
-		}
-	}(conn)
+	if err := writeloop(conn, serverWriter); err != nil {
+		fmt.Println("connection closed")
+		closeConnection(conn)
+	}
 }
 
 func writeloop(conn *websocket.Conn, messageBus *serverWriter) error {
@@ -45,7 +40,7 @@ func writeloop(conn *websocket.Conn, messageBus *serverWriter) error {
 		if err := waitForReady(conn); err == nil {
 			writeMessage := <-messageBus.messages
 			log.Println("writing message ", writeMessage)
-			if err := conn.WriteMessage(websocket.TextMessage, bytes.NewBufferString(writeMessage).Bytes());
+			if err := conn.WriteMessage(websocket.TextMessage, writeMessage);
 				err != nil {
 				return err
 			}
