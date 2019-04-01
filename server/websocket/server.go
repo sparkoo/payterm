@@ -26,7 +26,7 @@ type ServerWebsocket struct {
 }
 
 func (s *ServerWebsocket) AddWriteHandler(addr string) io.Writer {
-	writer := NewServerWriter()
+	writer := newServerWriter()
 	http.Handle(addr, writer)
 	return writer
 }

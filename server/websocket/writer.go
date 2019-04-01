@@ -8,52 +8,75 @@ import (
 	"net/http"
 )
 
+const ready = "ready"
+
 type serverWriter struct {
 	messages chan string
 }
 
-func NewServerWriter() *serverWriter {
+func newServerWriter() *serverWriter {
 	return &serverWriter{messages: make(chan string)}
 }
 
-func (s *serverWriter) Write(p []byte) (n int, err error) {
-	s.messages <- string(p)
+func (serverWriter *serverWriter) Write(p []byte) (n int, err error) {
+	serverWriter.messages <- string(p)
 	return len(p), nil
 }
 
-func (s *serverWriter) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	c, err := upgrader.Upgrade(writer, request, nil)
+func (serverWriter *serverWriter) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	conn, err := upgrader.Upgrade(writer, request, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
 		return
 	}
 
-	go writeloop(c, s)
-}
-
-func writeloop(c *websocket.Conn, s *serverWriter) {
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
+	go func(c *websocket.Conn) {
+		if err := writeloop(c, serverWriter); err != nil {
 			fmt.Println("connection closed")
 			if err := c.Close(); err != nil {
 				fmt.Println("error closing connection", err)
 			}
-			break
 		}
-		log.Printf("recv: %s, %v", message, mt)
+	}(conn)
+}
 
-		if string(message) == "ready" {
-			writeMessage := <-s.messages
+func writeloop(conn *websocket.Conn, messageBus *serverWriter) error {
+	for {
+		if err := waitForReady(conn); err == nil {
+			writeMessage := <-messageBus.messages
 			log.Println("writing message ", writeMessage)
-			err = c.WriteMessage(websocket.TextMessage, bytes.NewBufferString(writeMessage).Bytes())
-			if err != nil {
-				fmt.Println("connection closed")
-				if err := c.Close(); err != nil {
-					fmt.Println("error closing connection", err)
-				}
-				break
+			if err := conn.WriteMessage(websocket.TextMessage, bytes.NewBufferString(writeMessage).Bytes());
+				err != nil {
+				return err
 			}
+		} else {
+			log.Println(err)
 		}
 	}
+}
+
+func waitForReady(conn *websocket.Conn) error {
+	mt, messageBytes, err := conn.ReadMessage()
+	if err != nil {
+		fmt.Println("connection closed")
+		if err := conn.Close(); err != nil {
+			fmt.Println("error closing connection", err)
+		}
+		return err
+	}
+	log.Printf("recv: %s, %v", messageBytes, mt)
+	msg := string(messageBytes)
+	if msg == ready {
+		return nil
+	} else {
+		return &invalidReadyMessage{message: msg}
+	}
+}
+
+type invalidReadyMessage struct {
+	message string
+}
+
+func (err *invalidReadyMessage) Error() string {
+	return fmt.Sprintf("expected [ready] but got [%v]", err.message)
 }
