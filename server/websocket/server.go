@@ -45,8 +45,8 @@ func (s *ServerWebsocket) Start() {
 	}
 }
 
-func (*ServerWebsocket) Close() {
-
+// TODO: some proper close, stop and release release connections
+func (s *ServerWebsocket) Close() {
 }
 
 func closeConnection(conn *websocket.Conn) {

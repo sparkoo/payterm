@@ -7,7 +7,6 @@ import (
 	"github.com/sparkoo/payterm/term"
 	"github.com/sparkoo/payterm/websocket"
 	"log"
-	"time"
 )
 
 func main() {
@@ -33,10 +32,5 @@ func main() {
 
 	terminal := term.NewTerm(server, users, &keyboard, &display, &buzzer, &cardreader)
 	terminal.Start()
-
-	for {
-		time.Sleep(1 * time.Second)
-	}
-
-	fmt.Println("ende")
+	defer terminal.Close()
 }

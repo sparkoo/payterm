@@ -11,7 +11,8 @@ type Term struct {
 	loggedUser *model.Account
 	users      map[model.UserId]*model.Account
 
-	server websocket.Server
+	running bool
+	server  websocket.Server
 
 	io termIO
 }
@@ -19,6 +20,7 @@ type Term struct {
 func NewTerm(server websocket.Server, accounts map[model.UserId]*model.Account,
 	k *peripherals.Keyboard, d *peripherals.Display, b *peripherals.Buzzer, cr *peripherals.CardReader) *Term {
 	return &Term{
+		running:    false,
 		server:     server,
 		loggedUser: nil,
 		users:      accounts,
@@ -50,10 +52,16 @@ func (t *Term) Logout() {
 
 func (t *Term) Start() {
 	go t.server.Start()
-	for {
+	t.running = true
+	for t.running {
 		key := (*t.io.keyboard).Read()
 		(*t.io.display).Write(key)
 	}
+}
+
+func (t *Term) Close() {
+	t.running = false
+	t.Close()
 }
 
 type UserNotFoundError struct {
