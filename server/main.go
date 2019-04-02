@@ -2,38 +2,37 @@ package main
 
 import (
 	"fmt"
+	"github.com/sparkoo/payterm/model"
 	"github.com/sparkoo/payterm/peripherals"
+	"github.com/sparkoo/payterm/term"
 	"github.com/sparkoo/payterm/websocket"
+	"log"
 	"time"
 )
 
 func main() {
 
 	fmt.Println("starting terminal ...")
-	var cardreader = peripherals.NewDummyCardReader()
+	var cardreader = peripherals.NewCardReader()
 
 	server := websocket.NewServerWebsocket(":8080")
 	displayWriter := server.AddWriteHandler("/display")
 	buzzerWriter := server.AddWriteHandler("/buzzer")
 	keyboardReader := server.AddReadListener("/keyboard")
 
-	go server.Start()
+	user1 := model.NewAccount("Jon Doe", 1000)
+	log.Println(user1)
 
-	var display = peripherals.NewDummyDisplay(displayWriter)
-	var buzzer = peripherals.NewDummyBuzzer(buzzerWriter)
-	var keyboard = peripherals.NewDummyKeyboard(keyboardReader)
+	users := make(map[model.UserId]*model.Account)
+	users[user1.Id()] = user1
 
-	for {
-		key := keyboard.Read()
-		fmt.Printf("pressed [%s]\n", key)
-		display.Write(key)
-		//buzzer.Beep()
-		//fmt.Println("loop")
-		//time.Sleep(1 * time.Second)
-	}
-	buzzer.Beep()
-	fmt.Printf("keyboard read: [%v]\n", keyboard.Read())
-	fmt.Printf("cardreader read: [%v]\n", cardreader.Read())
+
+	var display = peripherals.NewDisplay(displayWriter)
+	var buzzer = peripherals.NewBuzzer(buzzerWriter)
+	var keyboard = peripherals.NewKeyboard(keyboardReader)
+
+	terminal := term.NewTerm(server, users, &keyboard, &display, &buzzer, &cardreader)
+	terminal.Start()
 
 	for {
 		time.Sleep(1 * time.Second)
