@@ -4,13 +4,13 @@ type CardReader interface {
 	Read() string
 }
 
-type CardReaderDummy struct {
+type CardReaderImpl struct {
 }
 
-func (*CardReaderDummy) Read() string {
+func (*CardReaderImpl) Read() string {
 	return "dummy message 123"
 }
 
-func NewDummyCardReader() CardReader {
-	return &CardReaderDummy{}
+func NewCardReader() CardReader {
+	return &CardReaderImpl{}
 }

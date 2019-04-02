@@ -9,11 +9,11 @@ type Keyboard interface {
 	Read() string
 }
 
-type KeyboardDummy struct {
+type KeyboardImpl struct {
 	reader io.Reader
 }
 
-func (k *KeyboardDummy) Read() string {
+func (k *KeyboardImpl) Read() string {
 	keyBytes := make([]byte, 1)
 	_, err := k.reader.Read(keyBytes)
 	log.Println("c", keyBytes)
@@ -23,6 +23,6 @@ func (k *KeyboardDummy) Read() string {
 	return string(keyBytes)
 }
 
-func NewDummyKeyboard(reader io.Reader) Keyboard {
-	return &KeyboardDummy{reader: reader}
+func NewKeyboard(reader io.Reader) Keyboard {
+	return &KeyboardImpl{reader: reader}
 }

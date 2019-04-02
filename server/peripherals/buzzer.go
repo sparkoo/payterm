@@ -8,14 +8,14 @@ type Buzzer interface {
 	Beep()
 }
 
-type BuzzerDummy struct {
+type BuzzerImpl struct {
 	writer *peripheralWriter
 }
 
-func (b *BuzzerDummy) Beep() {
+func (b *BuzzerImpl) Beep() {
 	b.writer.write("beep")
 }
 
-func NewDummyBuzzer(writer io.Writer) Buzzer {
-	return &BuzzerDummy{writer: newWriter(writer)}
+func NewBuzzer(writer io.Writer) Buzzer {
+	return &BuzzerImpl{writer: newWriter(writer)}
 }
