@@ -54,7 +54,7 @@ func (t *Term) Start() {
 	go t.server.Start()
 	t.running = true
 	for t.running {
-		key := (*t.io.keyboard).Read()
+		key := (*t.io.cardReader).Read()
 		(*t.io.display).Write(key)
 	}
 }

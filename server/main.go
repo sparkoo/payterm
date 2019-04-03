@@ -12,12 +12,12 @@ import (
 func main() {
 
 	fmt.Println("starting terminal ...")
-	var cardreader = peripherals.NewCardReader()
 
 	server := websocket.NewServerWebsocket(":8080")
 	displayWriter := server.AddWriteHandler("/display")
 	buzzerWriter := server.AddWriteHandler("/buzzer")
 	keyboardReader := server.AddReadListener("/keyboard")
+	cardreaderReader := server.AddReadListener("/cardreader")
 
 	user1 := model.NewAccount("Jon Doe", 1000)
 	log.Println(user1)
@@ -26,6 +26,7 @@ func main() {
 	users[user1.Id()] = user1
 
 
+	var cardreader = peripherals.NewCardReader(cardreaderReader)
 	var display = peripherals.NewDisplay(displayWriter)
 	var buzzer = peripherals.NewBuzzer(buzzerWriter)
 	var keyboard = peripherals.NewKeyboard(keyboardReader)
