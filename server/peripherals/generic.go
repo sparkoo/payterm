@@ -3,6 +3,7 @@ package peripherals
 import (
 	"fmt"
 	"io"
+	"log"
 )
 
 type peripheralWriter struct {
@@ -20,5 +21,20 @@ func (w *peripheralWriter) write(message string) {
 }
 
 type peripheralReader struct {
+	reader io.Reader
+}
 
+func newReader(reader io.Reader) *peripheralReader {
+	return &peripheralReader{reader: reader}
+}
+
+func (r *peripheralReader) read() string {
+	keyBytes := make([]byte, 64)
+
+	_, err := r.reader.Read(keyBytes)
+	log.Println("c", keyBytes)
+	if err != nil {
+		panic(err)
+	}
+	return string(keyBytes)
 }

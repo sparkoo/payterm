@@ -2,7 +2,6 @@ package peripherals
 
 import (
 	"io"
-	"log"
 )
 
 type Keyboard interface {
@@ -10,19 +9,13 @@ type Keyboard interface {
 }
 
 type KeyboardImpl struct {
-	reader io.Reader
+	reader *peripheralReader
 }
 
 func (k *KeyboardImpl) Read() string {
-	keyBytes := make([]byte, 1)
-	_, err := k.reader.Read(keyBytes)
-	log.Println("c", keyBytes)
-	if err != nil {
-		panic(err)
-	}
-	return string(keyBytes)
+	return k.reader.read()
 }
 
 func NewKeyboard(reader io.Reader) Keyboard {
-	return &KeyboardImpl{reader: reader}
+	return &KeyboardImpl{reader: newReader(reader)}
 }
