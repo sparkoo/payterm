@@ -1,10 +1,4 @@
-from websocket import create_connection
+from iohelpers import connectionLoop
+from iohelpers import readLoop
 
-ws = create_connection("ws://localhost:8080/buzzer")
-
-while True:
-    ws.send("ready")
-    result = ws.recv()
-    print(result)
-
-ws.close()
+connectionLoop("buzzer", readLoop, "bzzz: ")

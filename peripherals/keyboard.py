@@ -1,11 +1,4 @@
-from websocket import create_connection
+from iohelpers import connectionLoop
+from iohelpers import writeLoop
 
-ws = create_connection("ws://localhost:8080/keyboard")
-
-while True:
-    key = input("key: ")
-    ws.send(key)
-    result = ws.recv()
-    print(result)
-
-ws.close()
+connectionLoop("keyboard", writeLoop, "key: ")
