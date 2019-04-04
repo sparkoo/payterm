@@ -30,7 +30,7 @@ func main() {
 	var buzzer = peripherals.NewBuzzer(buzzerWriter)
 	var keyboard = peripherals.NewKeyboard(keyboardReader)
 
-	terminal := term.NewTerm(server, users, &keyboard, &display, &buzzer, &cardreader)
+	terminal := term.NewTerm(server, users, keyboard, display, buzzer, cardreader)
 	terminal.Start()
 	defer terminal.Close()
 }

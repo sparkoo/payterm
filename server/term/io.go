@@ -3,8 +3,8 @@ package term
 import "github.com/sparkoo/payterm/peripherals"
 
 type termIO struct {
-	display    *peripherals.Display
-	buzzer     *peripherals.Buzzer
-	keyboard   *peripherals.Keyboard
-	cardReader *peripherals.CardReader
+	display    peripherals.OutputWriter
+	buzzer     peripherals.OutputWriter
+	keyboard   peripherals.InputReader
+	cardReader peripherals.InputReader
 }
