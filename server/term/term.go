@@ -55,7 +55,11 @@ func (t *Term) Start() {
 	t.running = true
 	for t.running {
 		key := (*t.io.cardReader).Read()
-		(*t.io.display).Write(key)
+		if user, found := t.users[model.UserId(key)]; found {
+			(*t.io.display).Write(fmt.Sprintf("user [%s] has %d$", user.Name(), user.Balance()))
+		} else {
+			fmt.Printf("user with key [%s] not found\n", key)
+		}
 	}
 }
 

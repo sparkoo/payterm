@@ -1,10 +1,5 @@
 package model
 
-import (
-	"fmt"
-	"math/rand"
-)
-
 type UserId string
 
 type Account struct {
@@ -30,9 +25,9 @@ func (a *Account) Id() UserId {
 	return a.id
 }
 
-func NewAccount(name string, balance int) *Account {
+func NewAccount(id UserId, name string, balance int) *Account {
 	return &Account{
-		id:      UserId(fmt.Sprintf("%v", rand.Uint64())),
+		id:      id,
 		name:    name,
 		balance: balance,
 	}

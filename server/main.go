@@ -19,12 +19,11 @@ func main() {
 	keyboardReader := server.AddReadListener("/keyboard")
 	cardreaderReader := server.AddReadListener("/cardreader")
 
-	user1 := model.NewAccount("Jon Doe", 1000)
+	user1 := model.NewAccount(model.UserId("1"), "Jon Doe", 1000)
 	log.Println(user1)
 
 	users := make(map[model.UserId]*model.Account)
 	users[user1.Id()] = user1
-
 
 	var cardreader = peripherals.NewCardReader(cardreaderReader)
 	var display = peripherals.NewDisplay(displayWriter)

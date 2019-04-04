@@ -32,9 +32,16 @@ func (r *peripheralReader) read() string {
 	keyBytes := make([]byte, 64)
 
 	_, err := r.reader.Read(keyBytes)
-	log.Println("c", keyBytes)
 	if err != nil {
 		panic(err)
 	}
-	return string(keyBytes)
+	stringLength := 0
+	for i := 0; i < 64; i++ {
+		if keyBytes[i] == 0 {
+			stringLength = i
+			break
+		}
+	}
+	log.Println("c", keyBytes[:stringLength])
+	return string(keyBytes[:stringLength])
 }
