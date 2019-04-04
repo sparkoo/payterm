@@ -25,7 +25,7 @@ def readLoop(ws, prefix):
 
 
 def writeLoop(ws, prompt):
-    key = input("key: ")
+    key = input(prompt)
     ws.send(key)
     result = ws.recv()
-    print(prompt, result)
+    print(result)
