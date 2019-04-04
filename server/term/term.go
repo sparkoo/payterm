@@ -14,11 +14,12 @@ type Term struct {
 	running bool
 	server  websocket.Server
 
-	io termIO
+	io  termIO
+	pay *payment
 }
 
 func NewTerm(server websocket.Server, accounts map[model.UserId]*model.Account,
-	k *peripherals.Keyboard, d *peripherals.Display, b *peripherals.Buzzer, cr *peripherals.CardReader) *Term {
+	k peripherals.InputReader, d peripherals.OutputWriter, b peripherals.OutputWriter, cr peripherals.InputReader) *Term {
 	return &Term{
 		running:    false,
 		server:     server,
@@ -53,14 +54,48 @@ func (t *Term) Logout() {
 func (t *Term) Start() {
 	go t.server.Start()
 	t.running = true
+	crChannel := make(chan string)
+	keyboardChannel := make(chan string)
+	t.io.display.Write("Hello")
 	for t.running {
-		key := (*t.io.cardReader).Read()
-		if user, found := t.users[model.UserId(key)]; found {
-			(*t.io.display).Write(fmt.Sprintf("user [%s] has %d$", user.Name(), user.Balance()))
-		} else {
-			fmt.Printf("user with key [%s] not found\n", key)
+		go t.read(crChannel, t.io.cardReader)
+		go t.read(keyboardChannel, t.io.keyboard)
+
+		select {
+		case card := <-crChannel:
+			t.cardRead(card)
+		case key := <-keyboardChannel:
+			t.keyPressed(key)
 		}
 	}
+}
+
+func (t *Term) cardRead(card string) {
+	fmt.Println("card read", card)
+	if user, found := t.users[model.UserId(card)]; found {
+		t.io.display.Write(fmt.Sprintf("user [%s] has %d$", user.Name(), user.Balance()))
+	} else {
+		fmt.Printf("user with key [%s] not found\n", card)
+		t.io.display.Write("User not found!")
+	}
+}
+
+func (t *Term) keyPressed(key string) {
+	if t.pay == nil {
+		t.pay = &payment{amountString: ""}
+	}
+
+	if err := t.pay.readKey(key); err == nil {
+		t.io.display.Write(fmt.Sprintf("%s,-", t.pay.amountString))
+	} else {
+		fmt.Println("Cancel payment")
+		t.io.display.Write("Payment cancelled ...")
+		t.pay = nil
+	}
+}
+
+func (t *Term) read(inputChannel chan string, inputReader peripherals.InputReader) {
+	inputChannel <- inputReader.Read()
 }
 
 func (t *Term) Close() {
