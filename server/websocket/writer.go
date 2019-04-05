@@ -27,6 +27,8 @@ func (serverWriter *serverWriter) ServeHTTP(writer http.ResponseWriter, request 
 	if err != nil {
 		log.Print("upgrade:", err)
 		return
+	} else {
+		log.Println("connection created", request.URL)
 	}
 
 	if err := writeloop(conn, serverWriter); err != nil {
