@@ -25,10 +25,10 @@ func main() {
 	users := make(map[model.UserId]*model.Account)
 	users[user1.Id()] = user1
 
-	var cardreader = peripherals.NewCardReader(cardreaderReader)
-	var display = peripherals.NewDisplay(displayWriter)
-	var buzzer = peripherals.NewBuzzer(buzzerWriter)
-	var keyboard = peripherals.NewKeyboard(keyboardReader)
+	var cardreader = peripherals.NewInputReader(cardreaderReader)
+	var keyboard = peripherals.NewInputReader(keyboardReader)
+	var display = peripherals.NewOutputWriter(displayWriter)
+	var buzzer = peripherals.NewOutputWriter(buzzerWriter)
 
 	terminal := term.NewTerm(server, users, keyboard, display, buzzer, cardreader)
 	terminal.Start()
