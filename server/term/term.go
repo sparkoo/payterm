@@ -84,6 +84,10 @@ func (t *Term) cardRead(card string) {
 				t.pay = nil
 				t.io.display.Write("Payment successfull")
 				//time.Sleep(3 * time.Second)
+			} else {
+				t.io.display.Write(err.Error())
+				t.io.display.Write("cancelling payment")
+				t.pay = nil
 			}
 		}
 	} else {
@@ -96,10 +100,13 @@ func (t *Term) processPayment(user *model.Account, payment *payment) error {
 	if amount, err := payment.amount(); err != nil {
 		return err
 	} else {
-		newBalance := user.Withdraw(amount)
-		t.io.display.Write("payment successful")
-		t.io.display.Write(fmt.Sprintf("new balance of user [%s] is %d,- check %d", user.Name(), newBalance, user.Balance()))
-		return nil
+		if newBalance, err := user.Withdraw(amount); err == nil {
+			t.io.display.Write("payment successful")
+			t.io.display.Write(fmt.Sprintf("new balance of user [%s] is %d,- check %d", user.Name(), newBalance, user.Balance()))
+			return nil
+		} else {
+			return err
+		}
 	}
 }
 

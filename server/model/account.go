@@ -1,5 +1,7 @@
 package model
 
+import "fmt"
+
 type UserId string
 
 type Account struct {
@@ -8,9 +10,13 @@ type Account struct {
 	balance int
 }
 
-func (a *Account) Withdraw(amount int) int {
-	a.balance = a.balance - amount
-	return a.balance
+func (a *Account) Withdraw(amount int) (int, error) {
+	newBalance := a.balance - amount
+	if newBalance < 0 {
+		return 0, &NotEnoughMoneyOnAccountError{}
+	}
+	a.balance = newBalance
+	return a.balance, nil
 }
 
 func (a *Account) Balance() int {
@@ -31,4 +37,11 @@ func NewAccount(id UserId, name string, balance int) *Account {
 		name:    name,
 		balance: balance,
 	}
+}
+
+type NotEnoughMoneyOnAccountError struct {
+}
+
+func (err *NotEnoughMoneyOnAccountError) Error() string {
+	return fmt.Sprintf("Not Enough money")
 }
