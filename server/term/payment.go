@@ -7,7 +7,6 @@ import (
 
 type payment struct {
 	amountString string
-	amount       int
 }
 
 type CancelPaymentError struct {
@@ -26,4 +25,21 @@ func (p *payment) readKey(key string) error {
 		return &CancelPaymentError{}
 	}
 	return nil
+}
+
+func (p *payment) amount() (int, error) {
+	if amountNumber, err := strconv.ParseInt(p.amountString, 10, 32); err == nil {
+		return int(amountNumber), nil
+	} else {
+		return 0, &IllegalAmountError{amountString: p.amountString, err: err}
+	}
+}
+
+type IllegalAmountError struct {
+	amountString string
+	err          error
+}
+
+func (err *IllegalAmountError) Error() string {
+	return fmt.Sprintf("Amount string can't be parsed. [%v], %v", err.amountString, err.err)
 }

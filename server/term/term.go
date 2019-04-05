@@ -54,9 +54,13 @@ func (t *Term) Logout() {
 func (t *Term) Start() {
 	go t.server.Start()
 	t.running = true
+	t.io.display.Write("Hello")
+	t.mainLoop()
+}
+
+func (t *Term) mainLoop() {
 	crChannel := make(chan string)
 	keyboardChannel := make(chan string)
-	t.io.display.Write("Hello")
 	for t.running {
 		go t.read(crChannel, t.io.cardReader)
 		go t.read(keyboardChannel, t.io.keyboard)
@@ -73,10 +77,29 @@ func (t *Term) Start() {
 func (t *Term) cardRead(card string) {
 	fmt.Println("card read", card)
 	if user, found := t.users[model.UserId(card)]; found {
-		t.io.display.Write(fmt.Sprintf("user [%s] has %d$", user.Name(), user.Balance()))
+		if t.pay == nil {
+			t.io.display.Write(fmt.Sprintf("user [%s] has %d$", user.Name(), user.Balance()))
+		} else {
+			if err := t.processPayment(user, t.pay); err == nil {
+				t.pay = nil
+				t.io.display.Write("Payment successfull")
+				//time.Sleep(3 * time.Second)
+			}
+		}
 	} else {
 		fmt.Printf("user with key [%s] not found\n", card)
 		t.io.display.Write("User not found!")
+	}
+}
+
+func (t *Term) processPayment(user *model.Account, payment *payment) error {
+	if amount, err := payment.amount(); err != nil {
+		return err
+	} else {
+		newBalance := user.Withdraw(amount)
+		t.io.display.Write("payment successful")
+		t.io.display.Write(fmt.Sprintf("new balance of user [%s] is %d,- check %d", user.Name(), newBalance, user.Balance()))
+		return nil
 	}
 }
 
