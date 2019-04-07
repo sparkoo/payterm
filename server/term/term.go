@@ -83,15 +83,18 @@ func (t *Term) cardRead(card string) {
 		} else {
 			if err := t.processPayment(user, t.pay); err == nil {
 				t.pay = nil
+				t.io.buzzer.Write("success-beep")
 				t.io.display.Write("Payment successfull")
 				//time.Sleep(3 * time.Second)
 			} else {
+				t.io.buzzer.Write("error-beep")
 				t.io.display.Write(err.Error())
 				t.io.display.Write("cancelling payment")
 				t.pay = nil
 			}
 		}
 	} else {
+		t.io.buzzer.Write("error-beep")
 		fmt.Printf("user with key [%s] not found\n", card)
 		t.io.display.Write("User not found!")
 	}
@@ -117,8 +120,10 @@ func (t *Term) keyPressed(key string) {
 	}
 
 	if err := t.pay.readKey(key); err == nil {
+		t.io.buzzer.Write("key-beep")
 		t.io.display.Write(fmt.Sprintf("%s,-", t.pay.amountString))
 	} else {
+		t.io.buzzer.Write("cancel-beep")
 		fmt.Println("Cancel payment")
 		t.io.display.Write("Payment cancelled ...")
 		t.pay = nil
