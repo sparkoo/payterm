@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/sparkoo/payterm/model"
 	"github.com/sparkoo/payterm/peripherals"
+	"github.com/sparkoo/payterm/server/websocket"
 	"github.com/sparkoo/payterm/term"
-	"github.com/sparkoo/payterm/websocket"
 	"log"
 )
 
@@ -13,6 +13,7 @@ func main() {
 
 	fmt.Println("starting terminal ...")
 
+	//server := tcp.NewServerTcp(":8080")
 	server := websocket.NewServerWebsocket(":8080")
 	displayWriter := server.AddWriteHandler("/display")
 	buzzerWriter := server.AddWriteHandler("/buzzer")
