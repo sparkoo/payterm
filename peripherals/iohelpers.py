@@ -1,6 +1,7 @@
 from websocket import create_connection
 import time
 
+
 def connectionLoop(url, func, extra):
     while True:
         try:
@@ -19,7 +20,7 @@ def connectionLoop(url, func, extra):
 def readLoop(ws, prefix):
     while True:
         ws.send("ready")
-        print(prefix,end="")
+        print(prefix, end="")
         result = ws.recv()
         print(result)
 

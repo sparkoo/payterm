@@ -1,22 +1,17 @@
 package websocket
 
 import (
-	"github.com/gorilla/websocket"
+	ws "github.com/gorilla/websocket"
+	"github.com/sparkoo/payterm/server"
 	"io"
 	"log"
 	"net/http"
 )
 
-var upgrader = websocket.Upgrader{
+
+var upgrader = ws.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-}
-
-type Server interface {
-	AddWriteHandler(addr string) io.Writer
-	AddReadListener(addr string) io.Reader
-	Start()
-	Close()
 }
 
 type ServerWebsocket struct {
@@ -35,7 +30,7 @@ func (s *ServerWebsocket) AddReadListener(addr string) io.Reader {
 	return r
 }
 
-func NewServerWebsocket(addr string) Server {
+func NewServerWebsocket(addr string) server.Server {
 	return &ServerWebsocket{addr: addr}
 }
 
@@ -49,7 +44,7 @@ func (s *ServerWebsocket) Start() {
 func (s *ServerWebsocket) Close() {
 }
 
-func closeConnection(conn *websocket.Conn) {
+func closeConnection(conn *ws.Conn) {
 	if err := conn.Close(); err != nil {
 		panic(err)
 	}

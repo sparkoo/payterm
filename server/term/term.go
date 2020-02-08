@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/sparkoo/payterm/model"
 	"github.com/sparkoo/payterm/peripherals"
-	"github.com/sparkoo/payterm/websocket"
+	server2 "github.com/sparkoo/payterm/server"
 )
 
 type Term struct {
@@ -12,13 +12,13 @@ type Term struct {
 	users      map[model.UserId]*model.Account
 
 	running bool
-	server  websocket.Server
+	server  server2.Server
 
 	io  termIO
 	pay *payment
 }
 
-func NewTerm(server websocket.Server, accounts map[model.UserId]*model.Account,
+func NewTerm(server server2.Server, accounts map[model.UserId]*model.Account,
 	k peripherals.InputReader, d peripherals.OutputWriter, b peripherals.OutputWriter, cr peripherals.InputReader) *Term {
 	return &Term{
 		running:    false,
