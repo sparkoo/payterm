@@ -136,7 +136,6 @@ func (t *Term) read(inputChannel chan string, inputReader peripherals.InputReade
 
 func (t *Term) Close() {
 	t.running = false
-	t.Close()
 }
 
 type UserNotFoundError struct {
