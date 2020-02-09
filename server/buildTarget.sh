@@ -12,6 +12,6 @@ TARGET_OUT=/home/pi/payterm
 
 GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -o ${OUT} main.go
 
-scp -i "$(cygpath -pm ~/.ssh/id_rsa)" ${OUT} pi@${TARGET_IP}:${TARGET_OUT}
+scp ${OUT} pi@${TARGET_IP}:${TARGET_OUT}
 # shellcheck disable=SC2029
-ssh -i "$(cygpath -pm ~/.ssh/id_rsa)" pi@${TARGET_IP} "chmod +x ${TARGET_OUT}"
+ssh pi@${TARGET_IP} "chmod +x ${TARGET_OUT}"
