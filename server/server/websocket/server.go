@@ -18,17 +18,10 @@ type ServerWebsocket struct {
 	addr string
 }
 
-func (s *ServerWebsocket) AddWriteHandler(addr string) io.Writer {
-	writer := newServerWriter()
-	http.Handle(addr, writer)
-	go pingTicker(writer)
-	return writer
-}
-
-func (s *ServerWebsocket) AddReadListener(addr string) io.Reader {
-	r := newServerReader()
-	http.Handle(addr, r)
-	return r
+func (s *ServerWebsocket) AddHandler(addr string) io.ReadWriteCloser {
+	h := newServerReadWriter()
+	http.Handle(addr, h)
+	return h
 }
 
 func NewServerWebsocket(addr string) server.Server {
