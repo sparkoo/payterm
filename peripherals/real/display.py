@@ -51,9 +51,13 @@ async def ws():
     while True:
       try:
         message = await websocket.recv()
-        writeToDisplay(message)
-        print(message)
-        await websocket.send("ready")
+        if message == "ping":
+          print("received ping, sending pong")
+          await websocket.send("ready")
+        else:
+          writeToDisplay(message)
+          print(message)
+          await websocket.send("ready")
       except KeyboardInterrupt:
         print("quitting ...")
         await websocket.close()
@@ -67,5 +71,4 @@ while True:
     asyncio.get_event_loop().run_until_complete(ws())
   except Exception as e:
     print(e)
-    writeToDisplay("Conn failed !!!\nTrying again...")
-    time.sleep(1)
+    asyncio.sleep(1)

@@ -6,8 +6,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
-
 
 var upgrader = ws.Upgrader{
 	ReadBufferSize:  1024,
@@ -21,6 +21,7 @@ type ServerWebsocket struct {
 func (s *ServerWebsocket) AddWriteHandler(addr string) io.Writer {
 	writer := newServerWriter()
 	http.Handle(addr, writer)
+	go pingTicker(writer)
 	return writer
 }
 
@@ -47,5 +48,15 @@ func (s *ServerWebsocket) Close() {
 func closeConnection(conn *ws.Conn) {
 	if err := conn.Close(); err != nil {
 		panic(err)
+	}
+}
+
+func pingTicker(writer io.Writer) {
+	ticker := time.NewTicker(10 * time.Second)
+	defer func() {
+		ticker.Stop()
+	}()
+	for range ticker.C {
+		_, _ = writer.Write([]byte("ping"))
 	}
 }
