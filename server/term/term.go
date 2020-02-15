@@ -79,7 +79,7 @@ func (t *Term) cardRead(card string) {
 	t.io.buzzer.Write("read-beep")
 	if user, found := t.users[model.UserId(card)]; found {
 		if t.pay == nil {
-			t.io.display.Write(fmt.Sprintf("user [%s] has %d$", user.Name(), user.Balance()))
+			t.io.display.Write(fmt.Sprintf("[%s]\n%d$", user.Name(), user.Balance()))
 		} else {
 			if err := t.processPayment(user, t.pay); err == nil {
 				t.pay = nil
@@ -105,7 +105,7 @@ func (t *Term) processPayment(user *model.Account, payment *payment) error {
 		return err
 	} else {
 		if newBalance, err := user.Withdraw(amount); err == nil {
-			t.io.display.Write("payment successful")
+			t.io.display.Write("payment ok")
 			t.io.display.Write(fmt.Sprintf("new balance of user [%s] is %d,- check %d", user.Name(), newBalance, user.Balance()))
 			return nil
 		} else {
@@ -143,5 +143,5 @@ type UserNotFoundError struct {
 }
 
 func (e *UserNotFoundError) Error() string {
-	return fmt.Sprintf("user [%v] not found", e.username)
+	return fmt.Sprintf("user %v\nnot found", e.username)
 }
