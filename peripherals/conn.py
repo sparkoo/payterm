@@ -18,9 +18,10 @@ async def handle(uri, func):
           try:
             message = await websocket.recv()
             if message == "ping":
-              print(message)
+              # print(message)
               await websocket.send("pong")
             else:
+              print("recv: ", message)
               func(message)
           except KeyboardInterrupt:
             print("quitting ...")

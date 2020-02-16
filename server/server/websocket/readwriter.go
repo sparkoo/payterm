@@ -11,6 +11,7 @@ import (
 const readyMessage = "ready"
 const ping = "ping"
 const pong = "pong"
+const heartbeatTickSeconds = 1
 
 type serverReadWriter struct {
 	write chan []byte
@@ -65,23 +66,20 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 
 	go func() {
 		// heartBeat
-		if err := hartBeat(heartBeat, s.write); err != nil {
+		if err := hearthBeat(heartBeat, s.write); err != nil {
 			log.Print("hearBeat failed: ", err)
 			fail <- err
 		}
 	}()
 
-	for e := range fail {
-		log.Print(e)
-		if err := conn.Close(); err != nil {
-			log.Print("already closed")
-			log.Print(err)
-		}
-	}
+	log.Printf("fail received, probably disconnected peripheral. [%s]", <-fail)
+	//for e := range fail {
+	//	log.Print("failed: ", e)
+	//}
 }
 
-func hartBeat(beat chan string, write chan []byte) error {
-	hearth := time.NewTicker(1 * time.Second)
+func hearthBeat(beat chan string, write chan []byte) error {
+	hearth := time.NewTicker(heartbeatTickSeconds * time.Second)
 	for range hearth.C {
 		write <- []byte(ping)
 		message := <-beat
