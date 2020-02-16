@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 )
 
 var upgrader = ws.Upgrader{
@@ -22,6 +21,14 @@ func (s *ServerWebsocket) AddHandler(addr string) io.ReadWriteCloser {
 	h := newServerReadWriter()
 	http.Handle(addr, h)
 	return h
+}
+
+func (s *ServerWebsocket) AddWriteHandler(addr string) io.Writer {
+	return s.AddHandler(addr)
+}
+
+func (s *ServerWebsocket) AddReadListener(addr string) io.Reader {
+	return s.AddHandler(addr)
 }
 
 func NewServerWebsocket(addr string) server.Server {
@@ -40,16 +47,6 @@ func (s *ServerWebsocket) Close() {
 
 func closeConnection(conn *ws.Conn) {
 	if err := conn.Close(); err != nil {
-		panic(err)
-	}
-}
-
-func pingTicker(writer io.Writer) {
-	ticker := time.NewTicker(10 * time.Second)
-	defer func() {
-		ticker.Stop()
-	}()
-	for range ticker.C {
-		_, _ = writer.Write([]byte("ping"))
+		log.Fatal(err)
 	}
 }

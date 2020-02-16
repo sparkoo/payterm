@@ -15,10 +15,10 @@ func main() {
 
 	//server := tcp.NewServerTcp(":8080")
 	server := websocket.NewServerWebsocket(":8080")
-	displayWriter := server.AddHandler("/display")
-	buzzerWriter := server.AddHandler("/buzzer")
-	keyboardReader := server.AddHandler("/keyboard")
-	cardreaderReader := server.AddHandler("/cardreader")
+	displayWriter := server.AddWriteHandler("/display")
+	buzzerWriter := server.AddWriteHandler("/buzzer")
+	keyboardReader := server.AddReadListener("/keyboard")
+	cardreaderReader := server.AddReadListener("/cardreader")
 
 	user1 := model.NewAccount(model.UserId("1"), "Jon Doe", 1000)
 	log.Println(user1)
