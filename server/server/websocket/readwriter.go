@@ -31,38 +31,69 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 		log.Fatal(readyErr)
 	}
 
+	read := make(chan string)
+	write := make(chan string)
+	heartBeat := make(chan string)
+	fail := make(chan error)
+
 	go func() {
-		if err := hartBeat(conn); err != nil {
-			log.Print(err)
-			closeConnection(conn)
+		for {
+			if _, messageBytes, err := conn.ReadMessage(); err != nil {
+				fail <- err
+			} else {
+				message := string(messageBytes)
+				read <- message
+				heartBeat <- message
+			}
 		}
 	}()
 
-	go writeLoop(conn, s)
-	go readLoop(conn, s)
-	for {
-		time.Sleep(1*time.Second)
+	go func(write chan string) {
+		for message := range write{
+			if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
+				fail <- err
+			}
+		}
+	}(write)
+
+	go func() {
+		if err := hartBeat(heartBeat, write); err != nil {
+			log.Print("hearBeat failed: ", err)
+			fail <- err
+		}
+	}()
+
+	go func() {
+		if err := writeLoop(conn, s); err != nil {
+			log.Print("writeLoop failed: ", err)
+			fail <- err
+		}
+	}()
+
+	go func() {
+		if err := readLoop(read, s); err != nil {
+			log.Print("readLoop failed: ", err)
+			fail <- err
+		}
+	}()
+
+	for e := range fail {
+		log.Print(e)
+		if err := conn.Close(); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
-func hartBeat(conn *websocket.Conn) error {
-	ping := []byte(ping)
-
+func hartBeat(beat chan string, write chan string) error {
 	hearth := time.NewTicker(1 * time.Second)
 	for range hearth.C {
-		if err := conn.WriteMessage(websocket.TextMessage, ping); err != nil {
-			return err
-		}
-		if messageType, messageBytes, err := conn.ReadMessage(); err != nil {
-			return err
-		} else {
-			message := string(messageBytes)
-			log.Printf("recv: %s, %v", message, messageType)
-			if message != pong {
-				return &invalidMessage{
-					message:  message,
-					expected: pong,
-				}
+		write <- ping
+		message := <- beat
+		if message != pong {
+			return &invalidMessage{
+				message:  message,
+				expected: pong,
 			}
 		}
 	}
@@ -85,10 +116,17 @@ func waitForReady(conn *websocket.Conn) error {
 	}
 }
 
-func readLoop(conn *websocket.Conn, s *serverReadWriter) {
+func readLoop(read chan string, s *serverReadWriter) error {
+	for message := range read {
+		if _, err := s.Read([]byte(message)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
-func writeLoop(conn *websocket.Conn, messageBus *serverReadWriter) {
+func writeLoop(conn *websocket.Conn, messageBus *serverReadWriter) error {
+	return nil
 }
 
 func (s *serverReadWriter) Read(readMessage []byte) (n int, err error) {

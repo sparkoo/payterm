@@ -5,6 +5,8 @@ import asyncio
 import websockets
 import time
 
+from peripherals.conn import conn
+
 lcd = None
 url = "ws://localhost:8080/display"
 
@@ -42,33 +44,10 @@ def writeToDisplay(message):
   lcd.message = message
 
 
-async def ws():
-  writeToDisplay("connecting ...")
-  async with websockets.connect(url) as websocket:
-    writeToDisplay("connected...\nsending ready...")
-    await websocket.send("ready")
-
-    while True:
-      try:
-        message = await websocket.recv()
-        if message == "ping":
-          print("received ping, sending pong")
-          await websocket.send("ready")
-        else:
-          writeToDisplay(message)
-          print(message)
-          await websocket.send("ready")
-      except KeyboardInterrupt:
-        print("quitting ...")
-        await websocket.close()
-        exit(0)
+def handle(message):
+  writeToDisplay(message)
+  print(message)
 
 
 initDisplay()
-
-while True:
-  try:
-    asyncio.get_event_loop().run_until_complete(ws())
-  except Exception as e:
-    print(e)
-    asyncio.sleep(1)
+conn("display", handle)

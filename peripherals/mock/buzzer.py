@@ -1,4 +1,8 @@
-from iohelpers import connectionLoop
-from iohelpers import readLoop
+from peripherals.conn import conn
 
-connectionLoop("buzzer", readLoop, "bzzz: ")
+
+def handle(message):
+  print("bzz: " + message)
+
+
+conn("buzzer", handle)
