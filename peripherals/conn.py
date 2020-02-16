@@ -8,22 +8,24 @@ def conn(addr, func):
 
 
 async def handle(uri, func):
-  async with websockets.connect(uri) as websocket:
-    print("connected, sending ready...")
-    await websocket.send("ready")
+  while True:
+    try:
+      async with websockets.connect(uri) as websocket:
+        print("connected, sending ready...")
+        await websocket.send("ready")
 
-    while True:
-      try:
-        message = await websocket.recv()
-        if message == "ping":
-          print(message)
-          await websocket.send("pong")
-        else:
-          func(message)
-      except KeyboardInterrupt:
-        print("quitting ...")
-        await websocket.close()
-        exit(0)
-      except ConnectionError:
-        print("no connection, trying again ...")
-        await asyncio.sleep(1)
+        while True:
+          try:
+            message = await websocket.recv()
+            if message == "ping":
+              print(message)
+              await websocket.send("pong")
+            else:
+              func(message)
+          except KeyboardInterrupt:
+            print("quitting ...")
+            await websocket.close()
+            exit(0)
+    except Exception:
+      print("something failed, trying connect again ...")
+      await asyncio.sleep(1)
