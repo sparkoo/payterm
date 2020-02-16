@@ -42,7 +42,7 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 				fail <- err
 			} else {
 				message := string(messageBytes)
-				//log.Printf("received [%s]", message)
+				log.Printf("received [%s]", message)
 				if message == pong {
 					heartBeat <- message
 				} else {

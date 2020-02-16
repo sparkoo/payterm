@@ -1,8 +1,13 @@
 from peripherals.conn import conn
 
 
-def handle(message):
+def read(message):
   print(message)
 
 
-conn("display", handle)
+def write():
+  key = input("eh: ")
+  return key
+
+
+conn("display", read, write)
