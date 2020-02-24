@@ -10,6 +10,7 @@ from peripherals.conn import conn
 lcd = None
 url = "ws://localhost:8080/display"
 
+
 def initDisplay():
   global lcd
 

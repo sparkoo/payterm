@@ -3,7 +3,7 @@
 set -x
 set -e
 
-TARGET_IP=192.168.1.101
+TARGET_IP=192.168.1.106
 TARGET_OS=linux
 TARGET_ARCH=arm
 

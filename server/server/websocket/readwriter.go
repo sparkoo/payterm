@@ -39,6 +39,7 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 		for {
 			if _, messageBytes, err := conn.ReadMessage(); err != nil {
 				fail <- err
+				return
 			} else {
 				message := string(messageBytes)
 				//log.Printf("received [%s]", message)
@@ -47,6 +48,7 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 				} else {
 					if _, err := s.Read(messageBytes); err != nil {
 						fail <- err
+						return
 					}
 				}
 			}
@@ -56,9 +58,10 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 	go func() {
 		// writeloop
 		for message := range s.write {
-			//log.Printf("about to write [%s]", message)
+			log.Printf("about to write [%s]", message)
 			if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 				fail <- err
+				return
 			}
 		}
 	}()
@@ -68,15 +71,23 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 		if err := hartBeat(heartBeat, s.write); err != nil {
 			log.Print("hearBeat failed: ", err)
 			fail <- err
+			return
+		}
+	}()
+
+	go func() {
+		hearth := time.NewTicker(1 * time.Second)
+		for range hearth.C {
+			s.write <- []byte("blabol")
 		}
 	}()
 
 	for e := range fail {
 		log.Print(e)
-		if err := conn.Close(); err != nil {
-			log.Print("already closed")
-			log.Print(err)
-		}
+		//if err := conn.Close(); err != nil {
+		//	log.Print("already closed")
+		//	log.Print(err)
+		//}
 	}
 }
 
@@ -106,6 +117,7 @@ func waitForReady(conn *websocket.Conn) error {
 	log.Printf(message)
 
 	if message == readyMessage {
+		log.Println("ready received")
 		return nil
 	} else {
 		return &invalidMessage{message: message, expected: readyMessage}
