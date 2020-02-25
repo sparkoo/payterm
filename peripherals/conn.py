@@ -1,8 +1,7 @@
 import asyncio
-from queue import Queue
+from queue import Queue, Empty
 
 import websockets
-
 
 messageQ = Queue()
 
@@ -15,61 +14,46 @@ def conn(addr, func):
 async def handle(uri, func):
   while True:
     try:
-      async with websockets.connect(uri) as websocket:
+      async with websockets.connect(uri) as ws:
         print("connected, sending ready...")
-        await websocket.send("ready")
-        await handler(websocket, func)
+        await ws.send("ready")
+
+        receiveTask = asyncio.create_task(receive(ws, func))
+        writeTask = asyncio.create_task(write(ws))
+
+        done, pending = await asyncio.wait(
+            {receiveTask, writeTask},
+            return_when=asyncio.FIRST_COMPLETED
+        )
+
+        print("done")
+        for task in pending:
+          print("closing others")
+          task.cancel()
 
     except KeyboardInterrupt:
       print("quitting ...")
-      await websocket.close()
+      await ws.close()
       exit(0)
     except Exception:
       print("something failed, trying connect again ...")
       await asyncio.sleep(1)
 
 
-async def producer():
-  global messageQ
-  message = messageQ.get()
-  print("send: ", message)
-  messageQ.task_done()
-  return message
-
-
-async def consumer(message, func):
-  print("recv: ", message)
-  global messageQ
-  if message == "ping":
-    print(message)
-    messageQ.put("pong")
-  else:
-    func(message)
-
-
-async def consumer_handler(websocket, func):
-  print("1")
+async def receive(websocket, func):
   async for message in websocket:
-    print("Revc: ", message)
-    await consumer(message, func)
+    if message == "ping":
+      messageQ.put("pong")
+    else:
+      func(message)
 
 
-async def producer_handler(websocket, func):
-  print("2")
+async def write(websocket):
   while True:
-    message = await producer()
-    print("send: ", message)
-    await websocket.send(message)
-
-
-async def handler(websocket, func):
-  consumer_task = asyncio.ensure_future(
-      consumer_handler(websocket, func))
-  producer_task = asyncio.ensure_future(
-      producer_handler(websocket, func))
-  done, pending = await asyncio.wait(
-      [consumer_task, producer_task],
-      return_when=asyncio.FIRST_COMPLETED,
-  )
-  for task in pending:
-    task.cancel()
+    try:
+      message = messageQ.get_nowait()
+      messageQ.task_done()
+      print("sending ", message)
+      await websocket.send(message)
+    except Empty as e:
+      await asyncio.sleep(.01)

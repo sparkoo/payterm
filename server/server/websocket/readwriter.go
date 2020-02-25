@@ -42,7 +42,7 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 				return
 			} else {
 				message := string(messageBytes)
-				//log.Printf("received [%s]", message)
+				log.Printf("received [%s]", message)
 				if message == pong {
 					heartBeat <- message
 				} else {
@@ -72,13 +72,6 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 			log.Print("hearBeat failed: ", err)
 			fail <- err
 			return
-		}
-	}()
-
-	go func() {
-		hearth := time.NewTicker(1 * time.Second)
-		for range hearth.C {
-			s.write <- []byte("blabol")
 		}
 	}()
 
