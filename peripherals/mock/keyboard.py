@@ -1,4 +1,12 @@
-from iohelpers import connectionLoop
-from iohelpers import writeLoop
+import os
 
-connectionLoop("keyboard", writeLoop, "key: ")
+from peripherals.conn import conn
+
+
+def write():
+  key = input("key: ")
+  return key
+
+
+# print(os.environ)
+conn("keyboard", None, write)

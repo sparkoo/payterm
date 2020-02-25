@@ -6,20 +6,20 @@ import websockets
 messageQ = Queue()
 
 
-def conn(addr, func):
+def conn(addr, readfunc, writefunc):
   asyncio.get_event_loop() \
-    .run_until_complete(handle('ws://localhost:8080/' + addr, func))
+    .run_until_complete(handle('ws://localhost:8080/' + addr, readfunc, writefunc))
 
 
-async def handle(uri, func):
+async def handle(uri, readfunc, writeQ):
   while True:
     try:
       async with websockets.connect(uri) as ws:
         print("connected, sending ready...")
         await ws.send("ready")
 
-        receiveTask = asyncio.create_task(receive(ws, func))
-        writeTask = asyncio.create_task(write(ws))
+        receiveTask = asyncio.create_task(receive(ws, readfunc))
+        writeTask = asyncio.create_task(write(ws, writeQ))
 
         done, pending = await asyncio.wait(
             {receiveTask, writeTask},
@@ -41,19 +41,33 @@ async def handle(uri, func):
 
 
 async def receive(websocket, func):
+  print("run receiver")
   async for message in websocket:
+    print("recv: ", message)
     if message == "ping":
       messageQ.put("pong")
     else:
-      func(message)
+      if func is not None:
+        func(message)
 
 
-async def write(websocket):
+async def write(websocket, writeQ):
+  print("run writer")
   while True:
     try:
       message = messageQ.get_nowait()
       messageQ.task_done()
-      print("sending ", message)
+      # print("sending ", message)
       await websocket.send(message)
     except Empty as e:
+      # print("write nothing")
+      await asyncio.sleep(.01)
+
+    try:
+      message = writeQ.get_nowait()
+      writeQ.task_done()
+      # print("sending ", message)
+      await websocket.send(message)
+    except Empty as e:
+      # print("write nothing")
       await asyncio.sleep(.01)

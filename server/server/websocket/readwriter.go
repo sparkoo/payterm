@@ -46,6 +46,7 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 				if message == pong {
 					heartBeat <- message
 				} else {
+					log.Printf("received [%s]", message)
 					if _, err := s.Read(messageBytes); err != nil {
 						fail <- err
 						return
@@ -58,7 +59,7 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 	go func() {
 		// writeloop
 		for message := range s.write {
-			log.Printf("about to write [%s]", message)
+			//log.Printf("about to write [%s]", message)
 			if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 				fail <- err
 				return

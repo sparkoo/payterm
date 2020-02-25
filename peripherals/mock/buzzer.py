@@ -5,4 +5,4 @@ def handle(message):
   print("bzz: " + message)
 
 
-conn("buzzer", handle)
+conn("buzzer", handle, None)

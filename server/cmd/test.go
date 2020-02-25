@@ -12,7 +12,7 @@ func main() {
 
 	server := websocket.NewServerWebsocket(":8080")
 	testReader := server.AddReadListener("/testRead")
-	testWriter := server.AddWriteHandler("/testWrite")
+	testWriter := server.AddWriteHandler("/display")
 
 	testPeripheralReader := peripherals.NewInputReader(testReader)
 	testPeripheralWriter := peripherals.NewOutputWriter(testWriter)
