@@ -63,7 +63,6 @@ func (t *Term) mainLoop() {
 	crChannel := make(chan string)
 	keyboardChannel := make(chan string)
 	for t.running {
-		log.Println("running... ")
 		go t.read(crChannel, t.io.cardReader)
 		go t.read(keyboardChannel, t.io.keyboard)
 
