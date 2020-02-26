@@ -1,11 +1,9 @@
-import os
-
-from peripherals.conn import conn
+from peripherals.conn import readConn
 
 
 def read(message):
-  print(message)
+  print("rrr: ", message)
 
 
 # print(os.environ)
-conn("display", read, None)
+readConn("display", read)

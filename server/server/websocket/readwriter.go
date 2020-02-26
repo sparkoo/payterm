@@ -5,12 +5,9 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
-	"time"
 )
 
 const readyMessage = "ready"
-const ping = "ping"
-const pong = "pong"
 
 type serverReadWriter struct {
 	write chan []byte
@@ -31,7 +28,6 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 		log.Fatal(readyErr)
 	}
 
-	heartBeat := make(chan string)
 	fail := make(chan error)
 
 	go func() {
@@ -43,14 +39,9 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 			} else {
 				message := string(messageBytes)
 				log.Printf("received [%s]", message)
-				if message == pong {
-					heartBeat <- message
-				} else {
-					log.Printf("received [%s]", message)
-					if _, err := s.Read(messageBytes); err != nil {
-						fail <- err
-						return
-					}
+				if _, err := s.Read(messageBytes); err != nil {
+					fail <- err
+					return
 				}
 			}
 		}
@@ -59,20 +50,11 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 	go func() {
 		// writeloop
 		for message := range s.write {
-			//log.Printf("about to write [%s]", message)
+			log.Printf("about to write [%s]", message)
 			if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 				fail <- err
 				return
 			}
-		}
-	}()
-
-	go func() {
-		// heartBeat
-		if err := hartBeat(heartBeat, s.write); err != nil {
-			log.Print("hearBeat failed: ", err)
-			fail <- err
-			return
 		}
 	}()
 
@@ -83,21 +65,6 @@ func (s *serverReadWriter) ServeHTTP(writer http.ResponseWriter, request *http.R
 		//	log.Print(err)
 		//}
 	}
-}
-
-func hartBeat(beat chan string, write chan []byte) error {
-	hearth := time.NewTicker(1 * time.Second)
-	for range hearth.C {
-		write <- []byte(ping)
-		message := <-beat
-		if message != pong {
-			return &invalidMessage{
-				message:  message,
-				expected: pong,
-			}
-		}
-	}
-	return nil
 }
 
 func waitForReady(conn *websocket.Conn) error {
@@ -118,21 +85,8 @@ func waitForReady(conn *websocket.Conn) error {
 	}
 }
 
-func readLoop(read chan string, s *serverReadWriter) error {
-	for message := range read {
-		if _, err := s.Read([]byte(message)); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func writeLoop(conn *websocket.Conn, messageBus *serverReadWriter) error {
-	return nil
-}
-
 func (s *serverReadWriter) Read(readMessage []byte) (n int, err error) {
-	copy(readMessage, <-s.read)
+	s.read <- readMessage
 	return len(readMessage), nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"github.com/sparkoo/payterm/model"
 	"github.com/sparkoo/payterm/peripherals"
 	server2 "github.com/sparkoo/payterm/server"
+	"log"
 )
 
 type Term struct {
@@ -62,6 +63,7 @@ func (t *Term) mainLoop() {
 	crChannel := make(chan string)
 	keyboardChannel := make(chan string)
 	for t.running {
+		log.Println("running... ")
 		go t.read(crChannel, t.io.cardReader)
 		go t.read(keyboardChannel, t.io.keyboard)
 
@@ -69,6 +71,7 @@ func (t *Term) mainLoop() {
 		case card := <-crChannel:
 			t.cardRead(card)
 		case key := <-keyboardChannel:
+			log.Println("pressed ", key)
 			t.keyPressed(key)
 		}
 	}

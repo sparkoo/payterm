@@ -1,8 +1,9 @@
-from peripherals.conn import conn
+from peripherals.conn import readConn
 
 
-def handle(message):
-  print("bzz: " + message)
+def read(message):
+  print("rrr: ", message)
 
 
-conn("buzzer", handle, None)
+# print(os.environ)
+readConn("buzzer", read)
