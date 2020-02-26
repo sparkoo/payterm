@@ -2,7 +2,6 @@ package peripherals
 
 import (
 	"io"
-	"log"
 )
 
 type InputReader interface {
@@ -27,7 +26,7 @@ func (ir *InputReaderImpl) Read() string {
 			break
 		}
 	}
-	log.Println("c", keyBytes[:stringLength])
+	//log.Println("c", keyBytes[:stringLength])
 	return string(keyBytes[:stringLength])
 }
 

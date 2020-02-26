@@ -1,11 +1,7 @@
+from peripherals.conn import readConn
 import board
 import digitalio
 import adafruit_character_lcd.character_lcd as characterlcd
-import asyncio
-import websockets
-import time
-
-from peripherals.conn import conn
 
 lcd = None
 url = "ws://localhost:8080/display"
@@ -51,4 +47,4 @@ def handle(message):
 
 
 initDisplay()
-conn("display", handle)
+readConn("display", handle)

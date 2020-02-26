@@ -10,7 +10,7 @@ TARGET_ARCH=arm
 OUT=out/payterm
 TARGET_OUT=/home/pi/payterm
 
-GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -o ${OUT} main.go
+GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -o ${OUT} cmd/main.go
 
 scp ${OUT} pi@${TARGET_IP}:${TARGET_OUT}
 # shellcheck disable=SC2029
