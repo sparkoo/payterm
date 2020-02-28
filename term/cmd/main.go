@@ -13,14 +13,13 @@ func main() {
 
 	fmt.Println("starting terminal ...")
 
-	//server := tcp.NewServerTcp(":8080")
 	server := http.NewServerHttp(":8080")
 	displayWriter := server.AddWriteHandler("/display")
 	buzzerWriter := server.AddWriteHandler("/buzzer")
 	keyboardReader := server.AddReadListener("/keyboard")
 	cardreaderReader := server.AddReadListener("/cardreader")
 
-	user1 := model.NewAccount(model.UserId("1"), "Jon Doe", 1000)
+	user1 := model.NewAccount("1", "Jon Doe", 1000)
 	log.Println(user1)
 
 	users := make(map[model.UserId]*model.Account)
