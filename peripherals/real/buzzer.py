@@ -13,13 +13,15 @@ def bzz(message):
   print("bzz: " + message)
   buzz = str(message).split(":")
 
-  frequency = int(buzz[0])
   length = int(buzz[1])
+  frequency = int(buzz[0])
   period = 1.0 / frequency
   delayValue = period / 2
 
   try:
-    while True:
+    now = time.time_ns()
+    future = now + (length * 1000)
+    while time.time_ns() < future:
       GPIO.output(buzzer_pin, True)
       time.sleep(delayValue)
       GPIO.output(buzzer_pin, False)
