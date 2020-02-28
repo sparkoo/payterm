@@ -8,26 +8,31 @@ OUT_DIR=${SWD}/out
 TERM_DIR=${SWD}/term
 PERIPHS_DIR=${SWD}/peripherals
 
-if [ -z "${PERIPHS_SUBDIR}" ]; then
-  PERIPHS_SUBDIR="."
-fi
 
 rm -rf "${OUT_DIR}"
 mkdir -p "${OUT_DIR}"
 
 pushd "${TERM_DIR}" > /dev/null
-printf "building terminal server ... "
+printf "refreshing go modules ... "
 go mod download
-go build -v -o "${OUT_DIR}"/term cmd/term.go
+printf "done\n"
+
+printf "building terminal server x64 linux ... "
+GOOS=linux GOARCH=amd64 go build -o "${OUT_DIR}"/term_x64 cmd/term.go
+printf "done\n"
+
+printf "building terminal server arm linux ... "
+GOOS=linux GOARCH=arm go build -o "${OUT_DIR}"/term_arm cmd/term.go
+printf "done\n"
+
+printf "building terminal server x64 windows ... "
+GOOS=windows GOARCH=amd64 go build -o "${OUT_DIR}"/term_win.exe cmd/term.go
 printf "done\n"
 popd > /dev/null
 
-pushd "${PERIPHS_DIR}" > /dev/null
 printf "copying peripheral controllers ... "
-cp "${PERIPHS_SUBDIR}"/*.py "${OUT_DIR}"
-cp -r lib/ "${OUT_DIR}"
+rsync -a --exclude '__pycache__' "${PERIPHS_DIR}"/. "${OUT_DIR}"
 printf "done\n"
-popd > /dev/null
 
 printf "\n"
 
