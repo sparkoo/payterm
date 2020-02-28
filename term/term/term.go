@@ -77,7 +77,7 @@ func (t *Term) mainLoop() {
 }
 
 func (t *Term) cardRead(card string) {
-	fmt.Println("card read", card)
+	log.Println("card read", card)
 	t.io.buzzer.Write("read-beep")
 	if user, found := t.users[model.UserId(card)]; found {
 		if t.pay == nil {
