@@ -6,7 +6,7 @@ conn = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(conn)
 
 
-buzzer_pin = 4
+buzzer_pin = 1
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(buzzer_pin, GPIO.IN)
