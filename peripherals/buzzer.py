@@ -8,12 +8,12 @@ spec.loader.exec_module(conn)
 
 buzzer_pin = 1
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(buzzer_pin, GPIO.IN)
-GPIO.setup(buzzer_pin, GPIO.OUT)
-
 
 def bzz(message):
+  GPIO.setmode(GPIO.BCM)
+  GPIO.setup(buzzer_pin, GPIO.IN)
+  GPIO.setup(buzzer_pin, GPIO.OUT)
+
   print("bzz: " + message)
   buzz = str(message).split(":")
 

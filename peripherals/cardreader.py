@@ -5,10 +5,10 @@ spec = importlib.util.spec_from_file_location("conn", "lib/conn.py")
 conn = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(conn)
 
-reader = SimpleMFRC522()
 
 def readCard():
   try:
+    reader = SimpleMFRC522()
     cardid, text = reader.read()
     print(cardid)
     print(text)
