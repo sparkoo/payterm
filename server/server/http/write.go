@@ -16,7 +16,7 @@ func (h *httpServerWriter) Write(p []byte) (n int, err error) {
 }
 
 func newHttpServerWriter(addr string) *httpServerWriter {
-	write := &httpServerWriter{write: make(chan []byte)}
+	write := &httpServerWriter{write: make(chan []byte, 1024)}
 	http.HandleFunc(addr, func(w http.ResponseWriter, r *http.Request) {
 		if bytes, err := ioutil.ReadAll(r.Body); err != nil {
 			log.Fatal(err)
