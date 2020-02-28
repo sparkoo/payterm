@@ -1,6 +1,10 @@
-from peripherals.conn import readConn
 import RPi.GPIO as GPIO
 import time
+import importlib.util
+spec = importlib.util.spec_from_file_location("conn", "lib/conn.py")
+conn = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(conn)
+
 
 buzzer_pin = 4
 
@@ -32,4 +36,4 @@ def bzz(message):
     GPIO.cleanup()
 
 
-readConn("display", bzz)
+conn.readConn("buzzer", bzz)

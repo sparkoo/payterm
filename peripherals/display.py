@@ -1,7 +1,10 @@
-from peripherals.conn import readConn
 import board
 import digitalio
 import adafruit_character_lcd.character_lcd as characterlcd
+import importlib.util
+spec = importlib.util.spec_from_file_location("conn", "lib/conn.py")
+conn = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(conn)
 
 lcd = None
 url = "ws://localhost:8080/display"
@@ -47,4 +50,4 @@ def handle(message):
 
 
 initDisplay()
-readConn("display", handle)
+conn.readConn("display", handle)

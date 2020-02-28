@@ -1,4 +1,7 @@
-from peripherals.conn import writeConn
+import importlib.util
+spec = importlib.util.spec_from_file_location("conn", "../lib/conn.py")
+conn = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(conn)
 
 
 def write():
@@ -6,4 +9,4 @@ def write():
 
 
 # print(os.environ)
-writeConn("cardreader", write)
+conn.writeConn("cardreader", write)

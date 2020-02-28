@@ -1,6 +1,8 @@
 import time
-
-from peripherals.conn import readConn
+import importlib.util
+spec = importlib.util.spec_from_file_location("conn", "../lib/conn.py")
+conn = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(conn)
 
 
 def bzz(message):
@@ -24,4 +26,4 @@ def bzz(message):
 
 
 # print(os.environ)
-readConn("buzzer", bzz)
+conn.readConn("buzzer", bzz)

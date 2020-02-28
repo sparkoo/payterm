@@ -1,6 +1,9 @@
-from peripherals.conn import writeConn
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
+import importlib.util
+spec = importlib.util.spec_from_file_location("conn", "lib/conn.py")
+conn = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(conn)
 
 reader = SimpleMFRC522()
 
@@ -14,4 +17,4 @@ def readCard():
     GPIO.cleanup()
 
 
-writeConn("cardreader", readCard)
+conn.writeConn("cardreader", readCard)

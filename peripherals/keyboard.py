@@ -1,6 +1,8 @@
-from peripherals.conn import writeConn
 from gpiozero import OutputDevice, InputDevice
-import time
+import importlib.util
+spec = importlib.util.spec_from_file_location("conn", "lib/conn.py")
+conn = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(conn)
 
 # setup row and column pins on rpi
 ROW = [19, 13, 5, 27]
@@ -41,4 +43,4 @@ def readKey():
       OUT[outI].on()
 
 
-writeConn("keyboard", readKey)
+conn.writeConn("keyboard", readKey)
