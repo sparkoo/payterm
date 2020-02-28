@@ -3,7 +3,6 @@ import time
 
 
 def readConn(addr, func):
-  print("in lib one")
   client = http.client.HTTPConnection("localhost:8080")
   while True:
     try:

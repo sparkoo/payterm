@@ -56,6 +56,7 @@ func (t *Term) Start() {
 	go t.server.Start()
 	t.running = true
 	t.io.display.Write("Hello")
+	t.io.buzzer.Success()
 	t.mainLoop()
 }
 
