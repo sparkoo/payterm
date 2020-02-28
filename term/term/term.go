@@ -20,7 +20,7 @@ type Term struct {
 }
 
 func NewTerm(server server2.Server, accounts map[model.UserId]*model.Account,
-	k peripherals.InputReader, d peripherals.OutputWriter, b peripherals.OutputWriter, cr peripherals.InputReader) *Term {
+	k peripherals.InputReader, d peripherals.OutputWriter, b peripherals.Buzzer, cr peripherals.InputReader) *Term {
 	return &Term{
 		running:    false,
 		server:     server,
@@ -78,25 +78,25 @@ func (t *Term) mainLoop() {
 
 func (t *Term) cardRead(card string) {
 	log.Println("card read", card)
-	t.io.buzzer.Write("read-beep")
+	t.io.buzzer.Read()
 	if user, found := t.users[model.UserId(card)]; found {
 		if t.pay == nil {
 			t.io.display.Write(fmt.Sprintf("[%s]\n%d$", user.Name(), user.Balance()))
 		} else {
 			if err := t.processPayment(user, t.pay); err == nil {
 				t.pay = nil
-				t.io.buzzer.Write("success-beep")
+				t.io.buzzer.Success()
 				t.io.display.Write("Payment successfull")
 				//time.Sleep(3 * time.Second)
 			} else {
-				t.io.buzzer.Write("error-beep")
+				t.io.buzzer.Error()
 				t.io.display.Write(err.Error())
 				t.io.display.Write("cancelling payment")
 				t.pay = nil
 			}
 		}
 	} else {
-		t.io.buzzer.Write("error-beep")
+		t.io.buzzer.Error()
 		fmt.Printf("user with key [%s] not found\n", card)
 		t.io.display.Write("User not found!")
 	}
@@ -122,10 +122,10 @@ func (t *Term) keyPressed(key string) {
 	}
 
 	if err := t.pay.readKey(key); err == nil {
-		t.io.buzzer.Write("key-beep")
+		t.io.buzzer.Key()
 		t.io.display.Write(fmt.Sprintf("%s,-", t.pay.amountString))
 	} else {
-		t.io.buzzer.Write("cancel-beep")
+		t.io.buzzer.Cancel()
 		fmt.Println("Cancel payment")
 		t.io.display.Write("Payment cancelled ...")
 		t.pay = nil

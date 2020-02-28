@@ -28,7 +28,7 @@ func main() {
 	var cardreader = peripherals.NewInputReader(cardreaderReader)
 	var keyboard = peripherals.NewInputReader(keyboardReader)
 	var display = peripherals.NewOutputWriter(displayWriter)
-	var buzzer = peripherals.NewOutputWriter(buzzerWriter)
+	var buzzer = peripherals.NewBuzzer(buzzerWriter)
 
 	terminal := term.NewTerm(server, users, keyboard, display, buzzer, cardreader)
 	terminal.Start()
