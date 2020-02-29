@@ -24,7 +24,7 @@ def bzz(message):
 
   try:
     now = time.time_ns()
-    future = now + (length * 1000)
+    future = now + (length * 1000 * 1000)
     while time.time_ns() < future:
       GPIO.output(buzzer_pin, True)
       time.sleep(delayValue)
