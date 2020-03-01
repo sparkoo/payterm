@@ -69,6 +69,8 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 
 ### Buzzer - Hot Passive Buzzer
 
+![1602A Display](docs/buzzer.png)
+
 #### Connection
 
 | No   | Name | Desc   | To         |
