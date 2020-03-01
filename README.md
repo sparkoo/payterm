@@ -84,6 +84,12 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 | 2    | I/O  | Data   | GPIO1 (28) |
 | 3    | GND  | -Power | gnd (39)   |
 
+### Case - Nexus 4 box
+
+ - this is a must
+ - just buy a phone, throw it away and keep the box
+ - most expensive piece of hardware here
+
 ## Demos
 ### 2020-02-29 evening
 ![Case](docs/2020-02-29-case.jpg)
