@@ -58,6 +58,8 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 
 ### Keyboard - 3x4 Membrane Matrix Keyboard
 
+![3x4 Keyboard](docs/keyboard.png)
+
 #### Connection
 
 | No   | Name | Desc      | To          |
