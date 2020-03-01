@@ -9,7 +9,7 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 
 ### Display - 1602A v2.0
 
-[1602A Display](docs/display.png)
+![1602A Display](docs/display.png)
 
  - 16x2 characters
  - +some 2 random pots I've found at home to control contrast (CPot) and backlight (LPot)
