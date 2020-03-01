@@ -48,6 +48,7 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 ### Keyboard - 3x4 Membrane Matrix Keyboard
 
 #### Connection
+
 | No   | Name | Desc      | To          |
 | -    | -    | -         | -           |
 | 1    | R1   | Row 1     | GPIO22 (15) |
@@ -59,6 +60,14 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 | 7    | C3   | Column 3  | GPIO14 (8)  |
 
 ### Buzzer - Hot Passive Buzzer
+
+#### Connection
+
+| No   | Name | Desc   | To         |
+| -    | -    | -      | -          |
+| 1    | VCC  | +Power | 5V (2)     |
+| 2    | I/O  | Data   | GPIO1 (28) |
+| 3    | GND  | -Power | gnd (39)   |
 
 ## Demos
 ### 2020-02-29 evening
