@@ -86,6 +86,8 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 
 ## Demos
 ### 2020-02-29 evening
+![Case](docs/2020-02-29-case.jpg)
+![Internals](docs/2020-02-29-internals.jpg)
 [![Demo 2 (2020-02-29 evening)](http://img.youtube.com/vi/qaHyFebox_I/0.jpg)](http://www.youtube.com/watch?v=qaHyFebox_I)
 
 ### 2020-02-29 morning
