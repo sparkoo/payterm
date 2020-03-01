@@ -10,6 +10,7 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 ### Display - 1602A v2.0
  - 16x2 characters
  - +some 2 random pots I've found at home to control contrast (CPot) and backlight (LPot)
+ - useful link: https://pimylifeup.com/raspberry-pi-lcd-16x2/
 
 #### Connection
 
@@ -32,6 +33,7 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 ### Card Reader - RFID-RC522
  - support cards - S50, S70, UltraLight, Pro, Desfire
  - +some blank S50 cards
+ - useful link: https://pimylifeup.com/raspberry-pi-rfid-rc522/
 
 #### Connection
 
