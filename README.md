@@ -2,7 +2,7 @@
 payment terminal toy project
 
 ## Used Hardware and connection
-Price of all hardware, except Raspberry Pi, is less than 10$.
+Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 ### Controller - Raspberry Pi Zero W
  - Pinout https://pinout.xyz/
  - numbers in `( )` in *Connection* tables are physical pins.
