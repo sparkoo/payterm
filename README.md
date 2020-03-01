@@ -4,14 +4,27 @@ payment terminal toy project
 ## Used Hardware and connection
 Price of all hardware, except Raspberry Pi, is less than 10$.
 ### Controller - Raspberry Pi Zero W
+ - Pinout https://pinout.xyz/
 ### Display - 1602A v2.0
  - 16x2 characters
- - +some 2 random pots I've found at home to control contrast and backlight
+ - +some 2 random pots I've found at home to control contrast (CPot) and backlight (LPot)
 #### Connection
 
-| No | Name | Desc | GPIO |
-|-|-|-|-|
-| 1 | VSS | GND | - |
+| No   | Name  | Desc                   | To          |
+| -    | -     | -                      | -           |
+| 1    | VSS   | -Power                 | ground      |
+| 2    | VDD   | +Power                 | 5V          |
+| 3    | V0    | Contrast               | CPot        |
+| 4    | RS    | Register select        | GPIO26 (37) |
+| 5    | R/W   | R/W switch (W=0; R=1)  | ground      |
+| 6    | E     | GND                    | GPIO19 (35) |
+| 7-10 | DB0-3 | Data                   | -           |
+| 11   | DB4   | Data                   | GPIO13 (33) |
+| 12   | DB5   | Data                   | GPIO21 (40) |
+| 13   | DB6   | Data                   | GPIO20 (38) |
+| 14   | DB7   | Data                   | GPIO16 (36) |
+| 15   | A     | +Light                 | LPot        |
+| 16   | K     | -Light                 | ground      |
 
 ### Card Reader - RFID-RC522
  - support cards - S50, S70, UltraLight, Pro, Desfire
