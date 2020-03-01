@@ -37,6 +37,9 @@ Price of all hardware is less than 10$ + Raspberry Pi Zero W.
 | 16   | K     | -Light                 | gnd (39)    |
 
 ### Card Reader - RFID-RC522
+
+![Card Reader](docs/cardreader.png)
+
  - support cards - S50, S70, UltraLight, Pro, Desfire
  - +some blank S50 cards
  - useful link: https://pimylifeup.com/raspberry-pi-rfid-rc522/
