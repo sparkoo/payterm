@@ -11,9 +11,9 @@ def readConn(addr, func):
       func(response)
     except (ConnectionRefusedError, http.client.RemoteDisconnected):
       print("Connection refused, maybe server isn't running.")
-      print("Trying again in 5s ...")
+      print("Trying again in 1s ...")
       client = http.client.HTTPConnection("localhost:8080")
-      time.sleep(5)
+      time.sleep(1)
 
 
 def writeConn(addr, func):

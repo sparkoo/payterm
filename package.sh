@@ -34,6 +34,10 @@ printf "copying peripheral controllers ... "
 rsync -a --exclude '__pycache__' "${PERIPHS_DIR}"/. "${OUT_DIR}"
 printf "done\n"
 
+printf "copying runner script ... "
+cp "${SWD}"/run.sh "${OUT_DIR}"
+printf "done\n"
+
 printf "\n"
 
 ls -l "${OUT_DIR}"
