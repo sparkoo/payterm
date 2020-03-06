@@ -19,23 +19,23 @@ printf "running the peripherals ... \n"
 
 printf "display ... "
 python3 display.py &
-PID=$!
-printf "[%d] done\n" "$PID"
+DISPLAY_PID=$!
+printf "[%d] done\n" "$DISPLAY_PID"
 
 printf "display ... "
 python3 buzzer.py &
-PID=$!
-printf "[%d] done\n" "$PID"
+BUZZER_PID=$!
+printf "[%d] done\n" "$BUZZER_PID"
 
 printf "display ... "
 python3 cardreader.py &
-PID=$!
-printf "[%d] done\n" "$PID"
+CARDREADER_PID=$!
+printf "[%d] done\n" "$CARDREADER_PID"
 
 printf "display ... "
 python3 keyboard.py &
-PID=$!
-printf "[%d] done\n" "$PID"
+KEYBOARD_PID=$!
+printf "[%d] done\n" "$KEYBOARD_PID"
 
 ## run the server
 printf "running the server ... "
