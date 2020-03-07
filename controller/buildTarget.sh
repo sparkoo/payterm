@@ -7,10 +7,10 @@ TARGET_IP=192.168.1.106
 TARGET_OS=linux
 TARGET_ARCH=arm
 
-OUT=out/payterm
+OUT=out/controller
 TARGET_OUT=/home/pi/payterm
 
-GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -o ${OUT} cmd/main.go
+GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -o ${OUT} cmd/controller.go
 
 scp ${OUT} pi@${TARGET_IP}:${TARGET_OUT}
 # shellcheck disable=SC2029

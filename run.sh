@@ -7,7 +7,7 @@ if [ -z "${ARCH}" ]; then
   exit 1
 fi
 
-SERVER=term_${ARCH}
+SERVER=controller_${ARCH}
 
 if [ "${ARCH}" == "win" ]; then
   SERVER=${SERVER}.exe

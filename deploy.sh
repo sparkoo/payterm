@@ -2,4 +2,7 @@
 
 SWD=$( cd "$(dirname "${0}")" && pwd )
 
-scp -r "${SWD}/out" pi@192.168.1.101:/home/pi/payterm
+TARGET_IP=192.168.1.101
+
+ssh pi@${TARGET_IP} "rm -rf /home/pi/payterm"
+scp -r "${SWD}/out" pi@${TARGET_IP}:/home/pi/payterm
