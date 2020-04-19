@@ -14,7 +14,7 @@ const PLATFORM_ARM = "arm"
 
 type conf struct {
 	paytermPath string
-	platform string
+	platform    string
 
 	// private
 	launcher string
@@ -37,8 +37,8 @@ func main() {
 	default:
 		log.Fatalf("invalid platform [%s]", conf.platform)
 	}
-	go execProcess("/bin/python3", conf.paytermPath + "/mock/buzzer.py")
-	go execProcess("/bin/python3", conf.paytermPath + "/mock/display.py")
+	go execProcess("/bin/python3", conf.paytermPath+"/mock/buzzer.py")
+	go execProcess("/bin/python3", conf.paytermPath+"/mock/display.py")
 	go execProcess(conf.paytermPath + "/" + conf.launcher)
 
 	time.Sleep(10 * time.Second)
@@ -53,7 +53,7 @@ func execProcess(command string, args ...string) {
 	if err := cmd.Start(); err != nil {
 		log.Println("blabol", command)
 		log.Fatal(err)
-	}else {
+	} else {
 		log.Printf("about to wait for [%s] [%+v] ... \n", command, cmd.ProcessState)
 		if err := cmd.Wait(); err != nil {
 			log.Printf("process [%s] error with [%s] [%+v] \n", command, err, cmd.ProcessState)
